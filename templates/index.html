@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telemetry Data</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Telemetry Data</h1>
+    <table id="telemetryTable">
+        <thead id="tableHeader">
+            <!-- Table headers will be added dynamically with JavaScript -->
+        </thead>
+        <tbody id="tableBody">
+            <!-- Table rows will be added dynamically with JavaScript -->
+        </tbody>
+    </table>
+
+    <script>
+        // Function to fetch data from Flask app and update the table
+        async function fetchData() {
+            try {
+                const response = await fetch('/data');
+                const { columns, data } = await response.json();
+
+                console.log('Columns:', columns);
+                console.log('Data:', data);
+
+                // Get the table header and body elements
+                const tableHeader = document.getElementById('tableHeader');
+                const tableBody = document.getElementById('tableBody');
+
+                // Clear existing headers and rows
+                tableHeader.innerHTML = '';
+                tableBody.innerHTML = '';
+
+                // Add new headers based on received column names
+                columns.forEach(column => {
+                    const th = document.createElement('th');
+                    th.textContent = column;
+                    tableHeader.appendChild(th);
+                });
+
+                // Add new rows with fetched data
+                data.forEach(row => {
+                    const newRow = tableBody.insertRow();
+                    columns.forEach(column => {
+                        const cell = newRow.insertCell();
+                        cell.textContent = row[column];
+                    });
+                });
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        // Fetch data initially when the page loads
+        fetchData();
+
+        // Fetch data every 5 seconds (adjust as needed)
+        setInterval(fetchData, 5000);
+    </script>
+</body>
+</html>
