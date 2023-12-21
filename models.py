@@ -24,6 +24,7 @@ class Data:
                 VALUES (?, ?, ?, ?, ?)
             ''', (device_id, state, time, sequence_number, datetime_obj))
             conn.commit()
+            print("********************* Data added ************************************")
         pass
 
     def fetch_robot_ids(self):
