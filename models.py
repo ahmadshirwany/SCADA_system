@@ -131,20 +131,32 @@ class Data:
             one_minute = timedelta(minutes=1)
             thirty_seconds = timedelta(seconds=30)
             if (state == "DOWN" and last_state == "DOWN") and (time_difference > thirty_seconds) :
-                timestamp = datetime_object.strftime("%Y-%m-%d %H:%M:%S")
                 message = f"Device {device_id} has been in {state} state for more than 30 seconds."
                 cursor.execute('''
                     INSERT INTO Notification (device_id, message, state, time)
                     VALUES (?,?,?,?)
                 ''', (device_id, message, state, datetime_object))
                 conn.commit()
-            if (state == "READY-IDLE-STARVED" and last_state == "READY-IDLE-STARVED") and (time_difference > one_minute):
-                timestamp = datetime_object.strftime("%Y-%m-%d %H:%M:%S")
+            elif  (last_state == "DOWN") and (time_difference > thirty_seconds):
+                message = f"Device {device_id} was in {last_state} state for more than 30 seconds."
+                cursor.execute('''
+                                    INSERT INTO Notification (device_id, message, state, time)
+                                    VALUES (?,?,?,?)
+                                ''', (device_id, message, state, datetime_object))
+                conn.commit()
+            elif (state == "READY-IDLE-STARVED" and last_state == "READY-IDLE-STARVED") and (time_difference > one_minute):
                 message = f"Device {device_id} has been in {state} state for more than 1 min."
                 cursor.execute('''
                                     INSERT INTO Notification (device_id, message, state, time)
                                     VALUES (?,?,?,?)
                                 ''', (device_id, message, state, datetime_object))
+                conn.commit()
+            elif last_state == "READY-IDLE-STARVED" and (time_difference > one_minute):
+                message = f"Device {device_id} was in {state} state for more than 1 min."
+                cursor.execute('''
+                                                    INSERT INTO Notification (device_id, message, state, time)
+                                                    VALUES (?,?,?,?)
+                                                ''', (device_id, message, state, datetime_object))
                 conn.commit()
 
     def fetch_all_notifications(self, robtID, startDate=None, endDate=None):
