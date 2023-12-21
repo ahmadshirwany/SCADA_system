@@ -21,8 +21,8 @@ class DataService:
     def fetch_all_data(self, robtID=None, startDate=None, endDate=None):
         return json.dumps(Data_obj.fetch_all_data(robtID, startDate, endDate))
 
-    def insert_notification(self, device_id, state, time, sequence_number, datetime_object, last_state):
-        Data_obj.insert_notification(device_id, state, time, sequence_number, datetime_object, last_state)
+    def insert_notification(self, device_id, state, time, sequence_number, datetime_object, last_record,last_state):
+        Data_obj.insert_notification(device_id, state, time, sequence_number, datetime_object, last_record,last_state)
 
     def fetch_all_notifications(self, robtID=None, startDate=None, endDate=None):
         return json.dumps(Data_obj.fetch_all_notifications(robtID, startDate, endDate))
@@ -48,12 +48,13 @@ class MQTTService:
             time = data.get('time', '')
             sequence_number = data.get('sequenceNumber', '')
             datetime_object = parse(time)
-            last_record = self.data_service.robots_latast_status(device_id)
+            last_record = json.loads(self.data_service.robots_latast_status(device_id))
             self.data_service.insert_data(device_id, state, time, sequence_number, datetime_object)
-            last_state = json.loads(last_record)['state']
-            if state == "DOWN" or last_state == "DOWN":
-                self.data_service.insert_notification(device_id, state, time, sequence_number, datetime_object,
-                                                      last_state)
+            last_state = last_record['state']
+            self.data_service.insert_notification(device_id, state, time, sequence_number, datetime_object,
+                                                      last_record,last_state)
+
+
             print(f"Received message for {device_id}: State={state}, Time={time}, Sequence Number={sequence_number}")
         except Exception as e:
             if payload == 'Test':

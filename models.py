@@ -72,23 +72,26 @@ class Data:
 
     def rob_data_states(self, robtID):
         data = self.fetch_all_data(robtID)
-        start_time = parse(data[-1]["Datetime"])
-        end_time = parse(data[0]["Datetime"])
-        total_time = (end_time - start_time).total_seconds()
-        state_times = {}
-        last_record_time = None
-        last_record_state = None
-        percentage_state_times = {}
-        for entry in data:
-            state = entry["state"]
-            entry_time = parse(entry["Datetime"])
-            if last_record_time != None:
-                state_times[last_record_state] = state_times.get(last_record_state, 0) + (
-                        last_record_time - entry_time).total_seconds()
-            last_record_time = entry_time
-            last_record_state = state
-        percentage_state_times = {state: (time / total_time) * 100 for state, time in state_times.items()}
-        return percentage_state_times
+        if data:
+            start_time = parse(data[-1]["Datetime"])
+            end_time = parse(data[0]["Datetime"])
+            total_time = (end_time - start_time).total_seconds()
+            state_times = {}
+            last_record_time = None
+            last_record_state = None
+            percentage_state_times = {}
+            for entry in data:
+                state = entry["state"]
+                entry_time = parse(entry["Datetime"])
+                if last_record_time != None:
+                    state_times[last_record_state] = state_times.get(last_record_state, 0) + (
+                            last_record_time - entry_time).total_seconds()
+                last_record_time = entry_time
+                last_record_state = state
+            percentage_state_times = {state: (time / total_time) * 100 for state, time in state_times.items()}
+            return percentage_state_times
+        else:
+            return "NA"
 
     def get_mtbf(self, robtID):
         with sqlite3.connect(DATABASE_FILE) as conn:
@@ -119,20 +122,30 @@ class Data:
         latest_record['meandata'] = mtbf
         return latest_record
 
-    def insert_notification(self, device_id, state, time, sequence_number, datetime_object, last_state):
+    def insert_notification(self, device_id, state, time, sequence_number, datetime_object, last_record,last_state):
         with sqlite3.connect(DATABASE_FILE) as conn:
             cursor = conn.cursor()
-            if state == "DOWN":
+            laststatetime =  parse(last_record['Datetime'])
+            currentstatetime =  parse(time)
+            time_difference = currentstatetime - laststatetime
+            one_minute = timedelta(minutes=1)
+            thirty_seconds = timedelta(seconds=30)
+            if (state == "DOWN" and last_state == "DOWN") and (time_difference > thirty_seconds) :
                 timestamp = datetime_object.strftime("%Y-%m-%d %H:%M:%S")
-                message = f"At {timestamp}, Device {device_id} state changed to {state}."
-            else:
+                message = f"Device {device_id} has been in {state} state for more than 30 seconds."
+                cursor.execute('''
+                    INSERT INTO Notification (device_id, message, state, time)
+                    VALUES (?,?,?,?)
+                ''', (device_id, message, state, datetime_object))
+                conn.commit()
+            if (state == "READY-IDLE-STARVED" and last_state == "READY-IDLE-STARVED") and (time_difference > one_minute):
                 timestamp = datetime_object.strftime("%Y-%m-%d %H:%M:%S")
-                message = f"At {timestamp}, Device {device_id} state changed to {state} from {last_state}."
-            cursor.execute('''
-                INSERT INTO Notification (device_id, message, state, time)
-                VALUES (?,?,?,?)
-            ''', (device_id, message, state, datetime_object))
-            conn.commit()
+                message = f"Device {device_id} has been in {state} state for more than 1 min."
+                cursor.execute('''
+                                    INSERT INTO Notification (device_id, message, state, time)
+                                    VALUES (?,?,?,?)
+                                ''', (device_id, message, state, datetime_object))
+                conn.commit()
 
     def fetch_all_notifications(self, robtID, startDate=None, endDate=None):
         with sqlite3.connect(DATABASE_FILE) as conn:
