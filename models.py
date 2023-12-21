@@ -115,7 +115,7 @@ class Data:
     def robots_latast_status(self, robtID):
         data = self.fetch_all_data(robtID)
         latest_record = data[0]
-        mtbf = self.get_mtbf(robtID)
+        mtbf = self.get_mtbf(latest_record['device_id'])
         latest_record['meandata'] = mtbf
         return latest_record
 
