@@ -297,8 +297,8 @@
         function fetchDataAndUpdateTable(deviceId) {
           //   var robotId = $("#robotIdSelect").val();
           const url = deviceId
-            ? `http://127.0.0.1:5000/data?robtID=${deviceId}`
-            : `http://127.0.0.1:5000/data`;
+            ? `https://newscadasystem.azurewebsites.net/data?robtID=${deviceId}`
+            : `https://newscadasystem.azurewebsites.net/data`;
 
           $.ajax({
             url: url,
@@ -343,8 +343,8 @@
 
         function fetchDataAndUpdateChart(deviceId) {
           const urlChart = deviceId
-            ? `http://127.0.0.1:5000/rob_data_stats?robtID=${deviceId}`
-            : "http://127.0.0.1:5000/rob_data_stats";
+            ? `https://newscadasystem.azurewebsites.net/rob_data_stats?robtID=${deviceId}`
+            : "https://newscadasystem.azurewebsites.net/rob_data_stats";
           $.ajax({
             url: urlChart,
             method: "GET",
@@ -386,8 +386,8 @@
 
         function fetchRobotInformation(deviceId) {
           const url = deviceId
-            ? `http://127.0.0.1:5000/robots_latest_status?robtID=${deviceId}`
-            : "http://127.0.0.1:5000/robots_latest_status";
+            ? `https://newscadasystem.azurewebsites.net/robots_latest_status?robtID=${deviceId}`
+            : "https://newscadasystem.azurewebsites.net/robots_latest_status";
 
           $.ajax({
             url: url,
