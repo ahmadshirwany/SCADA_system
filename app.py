@@ -36,7 +36,13 @@ def data():
     data = data_service.fetch_all_data(robtID, startDate, endDate)
     return data
 
-
+@app.route('/Alarms')
+def Alarms():
+    robtID = request.args.get('robtID', default=None)
+    startDate = request.args.get('startDate', default=None)
+    endDate = request.args.get('endDate', default=None)
+    data = data_service.fetch_all_notifications(robtID, startDate, endDate)
+    return data
 @app.route('/rob_data_stats')
 def get_robot():
     robtID = request.args.get('robtID', default=None)
