@@ -69,4 +69,4 @@ mqtt_service = MQTTService(data_service)
 message = mqtt_service.start_mqtt_subscription(data_service)
 print(message)
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=False, host='0.0.0.0')
