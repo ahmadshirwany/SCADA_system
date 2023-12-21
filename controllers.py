@@ -10,9 +10,10 @@ class DataService:
         initialize_database()
     def insert_data(self, device_id, state, time, sequence_number, datetime_object):
         Data_obj.insert_data(device_id, state, time, sequence_number, datetime_object)
-
-    def fetch_all_data(self, robtID = None):
-        return json.dumps(Data_obj.fetch_all_data(robtID))
+    def fetch_robot_ids(self):
+        return Data_obj.fetch_robot_ids()
+    def fetch_all_data(self, robtID = None,startDate = None,endDate= None):
+        return json.dumps(Data_obj.fetch_all_data(robtID,startDate,endDate))
     def insert_notification(self, message):
         Notification.insert_notification(message)
     def fetch_all_notifications(self):

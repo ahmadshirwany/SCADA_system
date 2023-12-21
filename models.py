@@ -41,14 +41,32 @@ class Data:
                        ''', (device_id, message, state, sequence_number, date_string))
             conn.commit()
         pass
-
-    def fetch_all_data(self,robtID):
+    def fetch_robot_ids(self):
+        with sqlite3.connect(DATABASE_FILE) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT DISTINCT device_id FROM Data ORDER BY device_id ASC")
+            robot_ids = [row[0] for row in cursor.fetchall()]
+        return robot_ids
+    def fetch_all_data(self,robtID,startDate=None,endDate=None):
         with sqlite3.connect(DATABASE_FILE) as conn:
             cursor = conn.cursor()
             if robtID == None:
-                cursor.execute('SELECT * FROM Data')
+                if startDate == None:
+                    cursor.execute('SELECT * FROM Data')
+                else:
+                    startDate_obj = parse(startDate)
+                    endDate_obj = parse(endDate)
+                    cursor.execute('SELECT * FROM Data where Datetime BETWEEN ? AND ?',
+                                   ( startDate_obj, endDate_obj))
             else:
-                cursor.execute('SELECT * FROM Data where device_id = ?', (robtID,))
+                if startDate== None:
+                    cursor.execute('SELECT * FROM Data where device_id = ?', (robtID,))
+                else:
+                    startDate_obj = parse(startDate)
+                    endDate_obj = parse(endDate)
+                    cursor.execute('SELECT * FROM Data WHERE device_id = ? AND Datetime BETWEEN ? AND ?',
+                                   (robtID, startDate_obj, endDate_obj))
+
             data = cursor.fetchall()
         columns = [description[0] for description in cursor.description]
         datalist = []
