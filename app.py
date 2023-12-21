@@ -7,7 +7,7 @@ app = Flask(__name__)
 CORS(app, resources={r"/data": {"origins": "*"},
                      r"/Alarms": {"origins": "*"},
                      r"/rob_data_stats": {"origins": "*"},
-                     r"/robots_latest_status": {"origins": "*"},
+                     r"/robots_latest_status": {"origins": "*"}
                     })
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///your_database.db'
 
