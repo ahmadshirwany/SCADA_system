@@ -103,7 +103,11 @@ class Data:
                 total_time_diff = sum(time_diffs, timedelta())
                 total_time_diff_seconds = total_time_diff.total_seconds()
                 average_time_diff_seconds = total_time_diff_seconds / len(time_diffs)
-                average_time_diff = str(timedelta(seconds=average_time_diff_seconds))
+                time_difference = timedelta(seconds=average_time_diff_seconds)
+                hours, remainder = divmod(time_difference.seconds, 3600)
+                minutes, seconds = divmod(remainder, 60)
+                average_time_diff = "{:02d} hrs {:02d} min {:02d} sec".format(hours, minutes, seconds)
+                # average_time_diff = str(timedelta(seconds=average_time_diff_seconds))
             else:
                 average_time_diff = 'NA'
         return average_time_diff

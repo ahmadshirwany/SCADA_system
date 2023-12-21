@@ -257,7 +257,7 @@
         </div>
           <div class="card">
           <h3>Mean Time between Failures</h3>
-          <div id="lastTimeConnected" style="height: 100px"></div>
+          <div id="MeanTimebetweenFailures" style="height: 100px"></div>
         </div>
         <div class="card">
           <h3>Pie Chart</h3>
@@ -418,7 +418,7 @@
             moment(data.time).format("DD/MM/YYYY HH:MM A")
           );
           $("#MeanTimebetweenFailures").html(
-            moment(data.time)
+            `<p> ${data.meandata}</p>`
           );
         }
 

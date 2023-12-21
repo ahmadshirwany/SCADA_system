@@ -5,7 +5,7 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app, resources={r"/data": {"origins": "*"},
-                     r"/Alarms": {"origins": "*"},
+                     r"/alarms": {"origins": "*"},
                      r"/rob_data_stats": {"origins": "*"},
                      r"/robots_latest_status": {"origins": "*"}
                     })
@@ -43,7 +43,7 @@ def data():
     data = data_service.fetch_all_data(robtID, startDate, endDate)
     return data
 
-@app.route('/Alarms')
+@app.route('/alarms')
 def Alarms():
     robtID = request.args.get('robtID', default=None)
     startDate = request.args.get('startDate', default=None)
