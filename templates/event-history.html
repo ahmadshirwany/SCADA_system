@@ -300,7 +300,7 @@
         $("#fetchDataButton").on("click", populateData);
 
         function fetchDataAndUpdateTable(deviceId, startDate, endDate) {
-          let url = "http://127.0.0.1:5000/Alarms";
+          let url = "https://newscadasystem.azurewebsites.net/Alarms";
           if (deviceId) {
             url += `?robtID=${encodeURIComponent(deviceId)}`;
             if (startDate && endDate) {
@@ -349,7 +349,7 @@
         }
 
         function fetchRobotInformation(deviceId, startDate, endDate) {
-          let url = "http://127.0.0.1:5000/robots_latest_status";
+          let url = "https://newscadasystem.azurewebsites.net/robots_latest_status";
           if (deviceId) {
             url += `?robtID=${encodeURIComponent(deviceId)}`;
             if (startDate && endDate) {
