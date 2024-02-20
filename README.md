@@ -1,4 +1,4 @@
-# Flask App for Data Visualization
+# SCADA Insights: Data Visualization for SCADA Systems
 
 ## Overview
 
